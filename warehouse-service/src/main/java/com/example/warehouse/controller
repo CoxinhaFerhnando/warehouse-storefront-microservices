@@ -1,0 +1,49 @@
+package com.example.warehouse.controller;
+
+import com.example.warehouse.model.Warehouse;
+import com.example.warehouse.service.WarehouseService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/warehouses")
+public class WarehouseController {
+
+    @Autowired
+    private WarehouseService warehouseService;
+
+    @GetMapping
+    public ResponseEntity<List<Warehouse>> getAllWarehouses() {
+        List<Warehouse> warehouses = warehouseService.findAll();
+        return ResponseEntity.ok(warehouses);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Warehouse> getWarehouseById(@PathVariable Long id) {
+        Warehouse warehouse = warehouseService.findById(id);
+        return warehouse != null ? ResponseEntity.ok(warehouse) : ResponseEntity.notFound().build();
+    }
+
+    @PostMapping
+    public ResponseEntity<Warehouse> createWarehouse(@RequestBody Warehouse warehouse) {
+        Warehouse createdWarehouse = warehouseService.save(warehouse);
+        return ResponseEntity.status(201).body(createdWarehouse);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Warehouse> updateWarehouse(@PathVariable Long id, @RequestBody Warehouse warehouse) {
+        Warehouse updatedWarehouse = warehouseService.update(id, warehouse);
+        return updatedWarehouse != null ? ResponseEntity.ok(updatedWarehouse) : ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteWarehouse(@PathVariable Long id) {
+        if (warehouseService.delete(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+}
